@@ -68,7 +68,103 @@
 ##  8. Generate you file system table file
 ###    genfstab -U /mnt >> /mnt/etc/fstab
 
-Alright, the weird part is over, it is smooth sailing from here
+Alright, the difficult part is over, it is smooth sailing from here
+
+##  9. Change into the root directory of your new installation
+###    arch-chroot /mnt
+       Notice how this changes your prompt
+
+##  10. Basic set up
+### i.  ln -sf /usr/share/zoneinfo/<Region>/<city>/etc/localtime 
+        This sets up your time zone. 
+        To find available regions : ls /usr/share/zoneinfo 
+        To find cities in your region : ls /use/share/zoneinfo/<region> 
+
+### ii. hwclock --systohc
+        This sets up your hardware clock
+
+### iii.pacman -S vim
+        This is where you install a text editor. It is completely upto you. Check out the arhc wiki for 
+        available text editors in the pacman repostiory. vim , nano and emacs are among the famous ones.
+
+### iv. Edit the /etc/locale.gen file and uncomment your locale. Most probably you might want to uncomment 
+        the line which looks like #en-us.UTF-8 UTF-8
+
+### v.  locale -gen "locale"
+        Here "locale" is the one you uncommented in the previous step. In my case, en-us.UTF-8
+
+### vi. Create a new file /etc/hostname and type in your desired hostname. Usually, it is the name of your computer
+        Let us assume you typed in "hostname"
+
+### vii.Create a file /etc/hosts and add the following lines
+        a. 127.0.0.1 localhost
+        b. ::1       localhost
+        c. 127.0.1.1 hostname.localdomain hostname 
+
+### viii. passwd 
+          THis will set up the password for your root account. A prompt will appear asking you for the password
+
+### ix. useradd -m "name of user (the username you want)"
+        This will add a new user with the username you provide. This account will be the one you normally log into
+
+### x. passwd "username of the newly created user"
+       This will set up password for the new user.
+
+### xi. usermod -aG wheel,audio,video,optical,storage "username"
+        This will add the user to the listed groups. 
+
+### xii.pacman -S sudo
+        Install the sudo package from pacman
+
+### xiii.pacman -S efibootmgr dosfstools os-prober mtools
+         This packages will also be requried for your system
+
+### xiv.mkdir /boot/EFI
+
+### xv. mount /dev/sda1 /boot/EFI
+
+### xvi.grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
+
+### xvii.grub-mkconfig -o /boot/grub/grub.cfg
+
+### xviii.pacman -S networkmanager
+          I prefer networkmanager to handle my internet. You can install the package of your choice
+
+### xix. systemctl enable NetworkManager
+         Here you must enable the service that you have installed. 
+
+### xx. 1. exit
+        2. umount -l /mnt
+        3. reboot
+
+And that is it, you have successfully installed Arch !
+
+However, when you reboot and login with the new user account you created, you might be dissapointed because
+there will be no graphical interface.
+
+What comes next is the post installation but that is outside the scope of this guide. 
+
+Basically, this is what you want to do
+    1. Install a display server like xorg (or wayland) 
+    2. Install a display manager for your login screen (my preference is lightdm)
+    3. Install a desktop environment or window manager, popular choices are:
+            i. Desktop environments:
+                a.  Gnome
+                b.  KDE
+                c.  XFCE
+                d.  LXDE
+                e.  Mate
+            ii. Window managers:
+                 a. open box (floating window manager)
+                 b. i3      (tiling window manager)
+                 c. dwm     ( "        "       "  )
+                 d. xmonad  ( "        "       "  )
+
+    4. Install an aur helper like "yay"
+
+At this point you will have most things to get you going. The arch wiki is a greate resouce to learn
+more about these packages that i have listed and most importantly, how to install them. 
+
 
   
 
